@@ -1,0 +1,75 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../polyteor-user.html">
+
+
+
+
+
+<dom-module id="demo-element">
+    <template>
+        <p>An example of <code>&lt;polyteor-user&gt;</code>:</p>
+
+        <p hidden$="[[!delay]]">Logged in! Logging out in {{delay}} sec</p>
+        <p hidden$="[[g(delay)]]">Logged out!</p>
+        
+        <polyteor-user user="{{user}}"></polyteor-user>
+
+        <pre>[[prettify(user)]]</pre>
+    </template>
+    <script>
+        (function () {
+    'use strict';
+
+    Polymer({
+        is: 'demo-element',
+        properties: {
+            delay: {
+                value: 10
+            }
+         },
+         
+        prettify: function (object) {
+            console.log(object)
+            if (!object) {
+                return '';
+            }
+            return JSON.stringify(object, null, '  ');
+        },
+        
+        ready: function(){
+             var self = this;
+             this.delay = 10
+             
+             console.log('Loging out in 10s...')
+             Meteor.loginWithPassword('jo', 'test');
+             setTimeout(function(){
+                  Meteor.logout()
+              }, 10000)
+              var i = setInterval(function(){
+             if(self.delay === 0){
+                    return clearInterval(i);
+               }
+               self.delay--;
+             }, 1000)
+
+        },
+
+        g: function (obj) {
+            // console.log('todos changed', path);
+            return obj > 0;
+        }
+
+    });
+})();
+    </script>
+</dom-module>
