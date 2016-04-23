@@ -15,7 +15,7 @@
           user: {
             type: Object,
             notify: true,
-            value: Meteor.user(),
+            value: null,
             readOnly: true
           }
         },
@@ -23,7 +23,6 @@
             var self = this;
             Tracker.autorun(function(){
                   self._setUser(Meteor.user());
-                  
             })
         }
       });
