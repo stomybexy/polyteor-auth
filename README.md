@@ -2,7 +2,7 @@
 
 ## polyteor-user
 
-Get meteor logged in user reactively.
+Get meteor logged in user reactively inside Polymer.
 
 # Usage
 ```html
