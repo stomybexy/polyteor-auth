@@ -6,26 +6,66 @@
 
     <script>
         (function() {
-      'use strict';
+            'use strict';
 
-      Polymer({
-        is: 'polyteor-user',
+            Polymer({
+                is: 'polyteor-user',
 
-        properties: {
-          user: {
-            type: Object,
-            notify: true,
-            value: null,
-            readOnly: true
-          }
-        },
-        ready: function(){
-            var self = this;
-            Tracker.autorun(function(){
-                  self._setUser(Meteor.user());
-            })
-        }
-      });
-    })();
+                properties: {
+                    user: {
+                        type: Object,
+                        notify: true,
+                        value: null,
+                        readOnly: true
+                    },
+                    meteorReady: {
+                        type: Boolean,
+                        value: false,
+                        notify: true,
+                        readOnly: true
+                    },
+                    profileReady: {
+                      type: Boolean,
+                      value: false,
+                      notify: true,
+                      readOnly: true
+                    }
+                },
+                observers: [
+                    '_onMeteorReady(meteorReady)',
+                    '_computeProfileReady(user.profile)'
+                ],
+                ready: function() {
+                    this._computeMeteorReady();
+
+                },
+                _computeMeteorReady: function() {
+                    var self = this;
+                    if (window.Meteor) {
+                        self._setMeteorReady(true);
+                    } else {
+                        setTimeout(function() {
+                            self._computeMeteorReady();
+                        }, 0);
+                    }
+                },
+                _onMeteorReady: function(ready) {
+                    if (!ready) {
+                        return;
+                    }
+                    var self = this;
+                    Meteor.startup(function(){
+                      Tracker.autorun(function() {
+                          self._setUser(Meteor.user());
+                        
+                      });
+                    });
+
+                },
+                _computeProfileReady: function(profile){
+                  this._setProfileReady(!!profile);
+                }
+            });
+        })();
     </script>
 </dom-module>

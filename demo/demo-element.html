@@ -19,57 +19,70 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <template>
         <p>An example of <code>&lt;polyteor-user&gt;</code>:</p>
 
+        <h3 hidden$="[[!profileReady]]">Profile Ready!</h3>
+
         <p hidden$="[[!delay]]">Logged in! Logging out in {{delay}} sec</p>
         <p hidden$="[[g(delay)]]">Logged out!</p>
-        
-        <polyteor-user user="{{user}}"></polyteor-user>
 
-        <pre>[[prettify(user)]]</pre>
+        <polyteor-user user="{{user}}" profile-ready="{{profileReady}}"></polyteor-user>
+
+        <pre>[[prettyUser]]</pre>
     </template>
     <script>
-        (function () {
-    'use strict';
+        (function() {
+            'use strict';
 
-    Polymer({
-        is: 'demo-element',
-        properties: {
-            delay: {
-                value: 10
-            }
-         },
-         
-        prettify: function (object) {
-            console.log(object)
-            if (!object) {
-                return '';
-            }
-            return JSON.stringify(object, null, '  ');
-        },
-        
-        ready: function(){
-             var self = this;
-             this.delay = 10
-             
-             console.log('Loging out in 10s...')
-             Meteor.loginWithPassword('jo', 'test');
-             setTimeout(function(){
-                  Meteor.logout()
-              }, 10000)
-              var i = setInterval(function(){
-             if(self.delay === 0){
-                    return clearInterval(i);
-               }
-               self.delay--;
-             }, 1000)
+            Polymer({
+                is: 'demo-element',
+                properties: {
+                    delay: {
+                        value: 10
+                    },
+                    prettyUser: {
+                      type: String,
+                      computed: 'prettify(user.*, user)'
+                    },
+                    profileReady: {
+                      type: String,
+                      observer: '_onProfile'
+                    }
+                },
 
-        },
+                prettify: function(path, object) {
+                    console.log(object);
+                    if (!object) {
+                        return '';
+                    }
+                    return JSON.stringify(object, null, '  ');
+                },
 
-        g: function (obj) {
-            // console.log('todos changed', path);
-            return obj > 0;
-        }
+                ready: function() {
+                    var self = this;
+                    this.delay = 10
 
-    });
-})();
+                    console.log('Loging out in 10s...')
+                    Meteor.loginWithPassword('jo', 'test');
+                    setTimeout(function() {
+                        Meteor.logout()
+                    }, 10000)
+                    var i = setInterval(function() {
+                        if (self.delay === 0) {
+                            return clearInterval(i);
+                        }
+                        self.delay--;
+                    }, 1000)
+
+                },
+                _onProfile: function(ready){
+                  console.log('Profile ready? ', ready);
+                },
+
+                g: function(obj) {
+                    // console.log('todos changed', path);
+                    return obj > 0;
+                }
+
+            });
+        })();
     </script>
 </dom-module>
