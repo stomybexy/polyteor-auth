@@ -25,10 +25,16 @@
                         readOnly: true
                     },
                     profileReady: {
-                      type: Boolean,
-                      value: false,
-                      notify: true,
-                      readOnly: true
+                        type: Boolean,
+                        value: false,
+                        notify: true,
+                        readOnly: true
+                    },
+                    userResolved: {
+                        type: Boolean,
+                        value: false,
+                        notify: true,
+                        readOnly: true
                     }
                 },
                 observers: [
@@ -54,16 +60,16 @@
                         return;
                     }
                     var self = this;
-                    Meteor.startup(function(){
-                      Tracker.autorun(function() {
-                          self._setUser(Meteor.user());
-                        
-                      });
+                    Meteor.startup(function() {
+                        Tracker.autorun(function() {
+                            self._setUser(Meteor.user());
+                            self._setUserResolved(true);
+                        });
                     });
 
                 },
-                _computeProfileReady: function(profile){
-                  this._setProfileReady(!!profile);
+                _computeProfileReady: function(profile) {
+                    this._setProfileReady(!!profile);
                 }
             });
         })();
